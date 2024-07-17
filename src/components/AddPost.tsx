@@ -13,8 +13,9 @@ import { Button } from './ui/button';
 import { useState } from 'react';
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import axios from "axios";
 
-const AddPost = () => {
+const AddPost = ({user_id} : {user_id : string}) => {
     const [seatOpen , setSeatOpen] = useState<boolean>(false);
     const [postState , setPostState] = useState({
         title:"",
@@ -28,9 +29,25 @@ const AddPost = () => {
     }
 
     const submit = () => {
-        console.log(postState);
-        console.log(file)
+        const formData = new FormData()
+        formData.append("title" , postState.title);
+        formData.append("description" , postState.description);
+        formData.append("image" , file!)
+        formData.append("user_id" , user_id)
 
+        axios.post("/api/user/post" , formData)
+        .then((res) => {
+            const response = res.data
+
+            if(response.status == 200 ){
+                alert("post created")
+            }else if (response.status == 400 ){
+                console.log("errorrsss")
+            }
+        })
+        .catch((err) => {
+            console.log("Error in posting")
+        })
     }
 
     return (
